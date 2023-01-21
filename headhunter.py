@@ -22,7 +22,7 @@ def extract_max_page():
     hh_soup = BeautifulSoup(hh_request.text, 'html.parser')
 
     # Нашли пагинатор по отдельному классу в разметке, используя метод библиотеки BeatifulSoup
-    paginator = hh_soup.findAll("span", {'class': 'pager-item-not-in-short-range'})
+    paginator = hh_soup.find_all("span", {'class': 'pager-item-not-in-short-range'})
 
     # Извлекаем ссылки из пагинатора
     pages = []
@@ -31,14 +31,24 @@ def extract_max_page():
 
     return pages[-1]
 
-
+def extract_job(html):
+    title = html.find('a').text
+    link = html.find('a')['href']
+    company = html.find('div', {'class': 'vacancy-serp-item__meta-info-company'}).text
+    company = company.strip()
+    location = html.find('div', {'class':'bloko-text'}).text
+    location = location.partition(',')[0]
+    return {'title': title, 'company':company, 'location':location, 'link':link}
 def extract_hh_jobs(last_page):
     jobs = []
     for page in range(last_page):
-        result = requests.get(f'{URL}&page={page}', headers)
+        print(f"Парсинг страницы {page}")
+        result = requests.get(f'{URL}&page={page}', headers=headers)
         print(result.status_code)
         soup = BeautifulSoup(result.text, 'html.parser')
-        results = soup.findAll('div', {'class': 'vacancy-serp-item'})
+        results = soup.find_all('div', {'class': 'vacancy-serp-item'})
         for result in results:
-            result.find('a').text
+            job = extract_job(result)
+            jobs.append(job)
+
     return jobs
