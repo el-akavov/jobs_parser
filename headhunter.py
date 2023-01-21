@@ -9,7 +9,7 @@ headers = {
     'Connection': 'keep-alive'
 }
 ITEMS = 100
-URL = f'https://hh.ru/search/vacancy?area=1&text=python&items_on_page={ITEMS}'
+URL = f'https://hh.ru/search/vacancy?area=1&text=python&page={ITEMS}'
 
 
 def extract_max_page():
